@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indicações do Renato</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #111; color: #fff; }
+        .topo { background: linear-gradient(180deg, #000 65%, #f5c400 100%); padding: 20px 10px; text-align: center; }
+        .topo h1 { margin: 0; font-size: 28px; color: #f5c400; text-transform: uppercase; letter-spacing: 1px; }
+        .topo p { font-size: 13px; opacity: 0.8; margin-top: 5px; }
+        
+        .controles { padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 15px; position: sticky; top: 0; background: #111; z-index: 100; border-bottom: 1px solid #333; }
+        
+        .categorias { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .categorias button { padding: 8px 15px; border-radius: 20px; border: 1px solid #f5c400; cursor: pointer; background: transparent; color: #f5c400; font-weight: bold; transition: 0.3s; font-size: 13px; }
+        .categorias button:hover, .categorias button.active { background: #f5c400; color: #000; }
+
+        .busca-container { width: 100%; max-width: 500px; }
+        .busca-container input { 
+            width: 100%; padding: 12px 20px; border-radius: 25px; border: 1px solid #444; 
+            background: #1b1b1b; color: #fff; outline: none; transition: 0.3s; box-sizing: border-box;
+        }
+        .busca-container input:focus { border-color: #f5c400; }
+
+        .btn-whatsapp-container { text-align: center; margin: 20px 0; }
+        .btn-whatsapp { display: inline-block; background: #25D366; color: #fff; padding: 14px 28px; border-radius: 50px; text-decoration: none; font-weight: bold; transition: 0.3s; }
+        .btn-whatsapp:hover { transform: scale(1.05); }
+
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 20px; }
+        
+        .card { background: #1b1b1b; border-radius: 15px; padding: 15px; text-align: center; transition: 0.3s; border: 1px solid #333; display: flex; flex-direction: column; }
+        .card:hover { border-color: #f5c400; transform: translateY(-5px); }
+        
+        .img-box { width: 100%; height: 180px; background: #fff; border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .card img { max-width: 90%; max-height: 90%; object-fit: contain; }
+        
+        .card h3 { font-size: 14px; margin: 10px 0; height: 40px; overflow: hidden; color: #ddd; }
+        .card p { font-size: 18px; color: #f5c400; font-weight: bold; margin: 5px 0 15px; }
+        .card a { display: block; padding: 10px; background: #f5c400; color: #000; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: auto; }
+        
+        @media (max-width: 1000px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 768px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 480px) { .grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div class="topo">
+    <h1>Confira essas ofertas</h1>
+    <p>*Esta página é filiada ao Mercado Livre*</p>
+</div>
+
+<div class="controles">
+    <div class="categorias" id="botoes-filtros">
+        <button onclick="definirCategoria('todos')" class="active">Todos</button>
+        <button onclick="definirCategoria('casa')">Casa</button>
+        <button onclick="definirCategoria('moda')">Moda</button>
+        <button onclick="definirCategoria('ferramentas')">Ferramentas</button>
+        <button onclick="definirCategoria('esporte')">Esporte</button>
+    </div>
+    <div class="busca-container">
+        <input type="text" id="inputBusca" placeholder="Pesquisar entre os 48 produtos..." onkeyup="filtrar()">
+    </div>
+</div>
+
+<div class="btn-whatsapp-container">
+    <a href="https://chat.whatsapp.com/HaB12c5YvYRGljl2wJwXHI" target="_blank" class="btn-whatsapp">
+        🟢 ENTRAR NO GRUPO DE OFERTAS
+    </a>
+</div>
+
+<div class="grid" id="grid-produtos"></div>
+
+<script>
+const produtos = [
+    // CASA
+    { "titulo": "Copo térmico gigante 1,2L", "preco": "R$ 49,99", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_874320-MLB104688128289_012026-F-copo-termico-gigante-12l-inox-com-tampa-e-inox-canudo.webp", "link": "https://mercadolivre.com/sec/1KGGncR", "categoria": "casa" },
+    { "titulo": "Fritadeira sem óleo Air Fryer 4L Mondial", "preco": "R$ 268,00", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_775407-MLA99776749612_122025-F.webp", "link": "https://mercadolivre.com/sec/1agqeTX", "categoria": "casa" },
+    { "titulo": "Conjunto Panelas Antiaderente 10 Peças", "preco": "R$ 189,00", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_784556-MLB75962100686_052024-F-conjunto-panelas-antiaderente-10-pecas-teflon-varias-cores.webp", "link": "https://mercadolivre.com/sec/2qGJMst", "categoria": "casa" },
+    { "titulo": "Mop Flash Limp Giratório Fit", "preco": "R$ 69,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_646002-MLA99406426656_112025-F.webp", "link" : "https://mercadolivre.com/sec/1DTHqCR", "categoria": "casa" },
+    { "titulo": "Kit 2 Lustre Luminária Pendente Pequim", "preco": "R$ 115,34", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_665120-MLA99859032031_112025-F.webp", "link" : "https://mercadolivre.com/sec/1UYGUk4", "categoria": "casa" },
+    { "titulo": "Jogo Lençol Casal 3pç 400 Fios", "preco": "R$ 35,81", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_623437-MLA100086251965_122025-F.webp", "link" : "https://mercadolivre.com/sec/2eXAEWc", "categoria": "casa" },
+    { "titulo": "Aparelho de Jantar Ryo Maresia 20 Peças", "preco": "R$ 339,90", "imagem":"https://http2.mlstatic.com/D_NQ_NP_2X_619198-MLA96107579199_102025-F.webp", "link" : "https://mercadolivre.com/sec/2ro33LN", "categoria": "casa" },
+    { "titulo": "Kit 4 Organizador De Geladeira Acrílico", "preco": "R$ 68,87", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_857413-MLB84509903752_052025-F.webp", "link" : "https://mercadolivre.com/sec/2MrMsU9", "categoria": "casa" },
+    { "titulo": "Tapete 2,00x1,50 Peludo Felpudo", "preco": "R$ 62,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_755662-MLA99498152944_112025-F.webp", "link": "https://mercadolivre.com/sec/2TtBMhS", "categoria" : "casa" },
+    { "titulo": "Liquidificador Philco 1200W 3L", "preco": "R$ 122,57", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_857659-MLA98259160111_112025-F.webp", "link": "https://mercadolivre.com/sec/2bpeTVm", "categoria": "casa" },
+    { "titulo": "Kit 4 Capas De Almofadas 42x42", "preco": "R$ 32,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_932601-MLA100084463137_122025-F.webp", "link": "https://mercadolivre.com/sec/29nKjS8", "categoria": "casa" },
+    { "titulo": "Conjunto de 6 Copos Vidro 450ml", "preco": "R$ 39,15", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_964593-MLA99614676300_122025-F.webp", "link": "https://mercadolivre.com/sec/1ptsfgj", "categoria": "casa" },
+
+    // MODA
+    { "titulo": "Camisa Casual Slim", "preco": "R$ 46,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_942962-MLB90363960505_082025-F.webp", "link": "https://mercadolivre.com/sec/2qatTHa", "categoria": "moda" },
+    { "titulo": "Kit 3 Calça Jeans Skinny Masculina", "preco": "R$ 129,19", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_844444-MLB99168165420_112025-F.webp", "link": "https://mercadolivre.com/sec/1nSFiKo", "categoria": "moda" },
+    { "titulo": "Vestido Feminino Midi Floral", "preco": "R$ 69,46", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_626715-MLB96659591940_112025-F.webp", "link": "https://mercadolivre.com/sec/2P11uZj", "categoria": "moda" },
+    { "titulo": "Jaqueta Alta Performance UV", "preco": "R$ 120,00", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_949065-MLB86829802986_072025-F.webp", "link": "https://mercadolivre.com/sec/1ybwhMF", "categoria": "moda" },
+    { "titulo": "Smartwatch Xiaomi Redmi Watch 5 Active", "preco": "R$ 236,99", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_949046-MLA99507276886_112025-F.webp", "link": "https://mercadolivre.com/sec/2cZbnB2", "categoria": "moda" },
+    { "titulo": "Kit Bolsas Feminina Sacola e Transversal", "preco": "R$ 99,99", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_941814-MLB106275973405_012026-F.webp", "link": "https://mercadolivre.com/sec/2CgpV9P", "categoria": "moda" },
+    { "titulo": "Kit 4 Camiseta Dry-fit Academia", "preco": "R$ 76,99", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_626928-MLB82004918446_022025-F.webp", "link": "https://mercadolivre.com/sec/1VAv5nQ", "categoria": "moda" },
+    { "titulo": "Óculos De Sol Quadrado Unissex", "preco": "R$ 46,04", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_973375-MLB93487816021_092025-F.webp", "link": "https://mercadolivre.com/sec/22MeWGR", "categoria": "moda" },
+    { "titulo": "Cinto Masculino Couro Legítimo Ferracini", "preco": "R$ 74,49", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_886368-MLB69940267143_062023-F.webp", "link": "https://mercadolivre.com/sec/1CZcbh9", "categoria": "moda" },
+    { "titulo": "Moletom Liso Algodão Unissex", "preco": "R$ 47,34", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_710995-MLB77244233388_072024-F.webp", "link": "https://mercadolivre.com/sec/1V1yiCg", "categoria": "moda" },
+    { "titulo": "Sandália Rasteirinha Feminina H", "preco": "R$ 45,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_882947-MLB104798834954_012026-F.webp", "link": "https://mercadolivre.com/sec/1nVvU4A", "categoria": "moda" },
+    { "titulo": "Boné Ny New York Aba Curva", "preco": "R$ 35,00", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_984548-MLB89370363117_082025-F.webp", "link": "https://mercadolivre.com/sec/295sueV", "categoria": "moda" },
+
+    // FERRAMENTAS
+    { "titulo": "Martelete Furadeira Allmind 1200W", "preco": "R$ 335,94", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_796432-MLA97975510381_112025-F.webp", "link": "https://mercadolivre.com/sec/2n8fm9Y", "categoria": "ferramentas" },
+    { "titulo": "Jogo De Ferramentas 169 Peças", "preco": "R$ 289,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_936056-MLA99425564798_112025-F.webp", "link": "https://mercadolivre.com/sec/2GjdAyx", "categoria": "ferramentas" },
+    { "titulo": "Kit Jogo De Ferramentas 129 Peças", "preco": "R$ 189,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_618929-MLA99520369354_112025-F.webp", "link": "https://mercadolivre.com/sec/2smPaaS", "categoria": "ferramentas" },
+    { "titulo": "Chave Impacto Parafusadeira 48v", "preco": "R$ 256,00", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_982598-MLA105448104477_012026-F.webp", "link": "https://mercadolivre.com/sec/2CX8fuU", "categoria": "ferramentas" },
+    { "titulo": "Trena de aço 5m Vonder", "preco": "R$ 19,00", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_798462-MLA100048916969_122025-F.webp", "link": "https://mercadolivre.com/sec/2unMmw9", "categoria": "ferramentas" },
+    { "titulo": "Kit Nível A Laser Verde 12 Linhas", "preco": "R$ 89,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_609947-MLA100070739765_122025-F.webp", "link": "https://mercadolivre.com/sec/2maUjG1", "categoria": "ferramentas" },
+    { "titulo": "Alicate Universal Vonder 8 Pol", "preco": "R$ 42,39", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_807084-MLA100072970361_122025-F.webp", "link": "https://mercadolivre.com/sec/1gszwv1", "categoria": "ferramentas" },
+    { "titulo": "Serra Circular Bosch 1500W", "preco": "R$ 729,65", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_691458-MLA99453208022_112025-F.webp", "link": "https://mercadolivre.com/sec/1g4JpHq", "categoria": "ferramentas" },
+    { "titulo": "Mini esmerilhadeira Bosch 710W", "preco": "R$ 299,20", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_670719-MLA99986706915_112025-F.webp", "link": "https://mercadolivre.com/sec/2YVtKLg", "categoria": "ferramentas" },
+    { "titulo": "Martelo De Unha Fibra Luzilar", "preco": "R$ 20,00", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_965337-MLA97402349830_112025-F.webp", "link": "https://mercadolivre.com/sec/1PrZAFb", "categoria": "ferramentas" },
+    { "titulo": "Caixa De Ferramentas Tática 18\"", "preco": "R$ 36,99", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_651384-MLA99360086264_112025-F.webp", "link": "https://mercadolivre.com/sec/296ZC7X", "categoria": "ferramentas" },
+    { "titulo": "Alicate Pressão + Chave Inglesa + Grifo", "preco": "R$ 71,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_736031-MLB88919983948_082025-F.webp", "link": "https://mercadolivre.com/sec/1AEBG8Q", "categoria": "ferramentas" },
+
+    // ESPORTE
+    { "titulo": "Tênis Esportivo New Speed", "preco": "R$ 178,75", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_853410-MLB87242826822_072025-F.webp", "link": "https://mercadolivre.com/sec/1aPVVFe", "categoria": "esporte" },
+    { "titulo": "Tatame Esteira Para Yoga 5mm", "preco": "R$ 42,29", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_951298-MLA84849917275_052025-F.webp", "link": "https://mercadolivre.com/sec/29iPY5D", "categoria": "esporte" },
+    { "titulo": "Kit 3 Faixas Elásticas Theraband", "preco": "R$ 21,99", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_640754-MLA101914761165_122025-F.webp", "link": "https://mercadolivre.com/sec/2noXCBZ", "categoria": "esporte" },
+    { "titulo": "Garrafa Térmica Gocase Inox 500ml", "preco": "R$ 70,30", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_703127-MLA99864871405_112025-F.webp", "link": "https://mercadolivre.com/sec/1TkhCoL", "categoria": "esporte" },
+    { "titulo": "Bola Futebol de Campo Penalty", "preco": "R$ 76,62", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_877637-MLA99858457169_112025-F.webp", "link": "https://mercadolivre.com/sec/2bbq6pY", "categoria": "esporte" },
+    { "titulo": "Corda De Pular Speed Rope", "preco": "R$ 24,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_734495-MLA101070844097_122025-F.webp", "link": "https://mercadolivre.com/sec/1JDJMQR", "categoria": "esporte" },
+    { "titulo": "Par de Halteres 2kg Emborrachado", "preco": "R$ 59,90", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_795776-MLA96152982443_102025-F.webp", "link": "https://mercadolivre.com/sec/1cWheQS", "categoria": "esporte" },
+    { "titulo": "Mochila Masculina Impermeável", "preco": "R$ 60,12", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_615102-MLA99700960038_122025-F.webp", "link": "https://mercadolivre.com/sec/2rxPgc9", "categoria": "esporte" },
+    { "titulo": "Bicicleta Aro 29 GTS Dexter", "preco": "R$ 827,99", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_848325-MLA99453050974_112025-F.webp", "link": "https://mercadolivre.com/sec/2hxcick", "categoria": "esporte" },
+    { "titulo": "Kit 2 Shorts De Compressão", "preco": "R$ 56,24", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_906889-MLB88368149898_072025-F.webp", "link": "https://mercadolivre.com/sec/21qZ2h9", "categoria": "esporte" },
+    { "titulo": "Joelheira Compressão Ortopédica", "preco": "R$ 19,00", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_876733-MLA99358545910_112025-F.webp", "link": "https://mercadolivre.com/sec/2UxgGr4", "categoria": "esporte" },
+    { "titulo": "Óculos Natação Espelhado Speed Pro", "preco": "R$ 67,42", "imagem": "https://http2.mlstatic.com/D_NQ_NP_2X_843486-MLA99493085148_112025-F.webp", "link": "https://mercadolivre.com/sec/2JAhGQr", "categoria": "esporte" }
+];
+
+let categoriaAtiva = 'todos';
+
+function renderizar(lista) {
+    const grid = document.getElementById('grid-produtos');
+    grid.innerHTML = lista.map(p => `
+        <div class="card">
+            <div class="img-box"><img src="${p.imagem}" alt="${p.titulo}"></div>
+            <h3>${p.titulo}</h3>
+            <p>${p.preco}</p>    
+            <a href="${p.link}" target="_blank">Ver no Mercado Livre</a>
+        </div>
+    `).join('');
+}
+
+function definirCategoria(cat) {
+    categoriaAtiva = cat;
+    const botoes = document.querySelectorAll('#botoes-filtros button');
+    botoes.forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.toLowerCase() === cat || (cat === 'todos' && btn.innerText === 'Todos'));
+    });
+    filtrar();
+}
+
+function filtrar() {
+    const termo = document.getElementById('inputBusca').value.toLowerCase();
+    const filtrados = produtos.filter(p => {
+        const matchCat = (categoriaAtiva === 'todos' || p.categoria === categoriaAtiva);
+        const matchBusca = p.titulo.toLowerCase().includes(termo);
+        return matchCat && matchBusca;
+    });
+    renderizar(filtrados);
+}
+
+renderizar(produtos);
+</script>
+
+</body>
+</html>
